@@ -68,11 +68,11 @@
   "SVG icons collection created on the fly."
   :group 'multimedia)
 
-(defcustom  svg-icon-collections
-  '(("bootstrap" . "https://icons.getbootstrap.com/icons/%s.svg")
-    ("material" . "https://raw.githubusercontent.com/Templarian/MaterialDesign/master/svg/%s.svg")
-    ("octicons" . "https://raw.githubusercontent.com/primer/octicons/master/icons/%s-24.svg")
-    ("boxicons" . "https://boxicons.com/static/img/svg/regular/bx-%s.svg"))
+(defcustom svg-icon-collections
+  '(("bootstrap" . "%scollections/bootstrap/icons/%s.svg")
+    ("material" . "%scollections/material/svg/%s.svg")
+    ("octicons" . "%scollections/octicons/icons/%s-24.svg")
+    ("boxicons" . "%scollections/boxicons/svg/regular/bx-%s.svg"))
     
   "Various icons collections stored as (name . base-url).
 
@@ -93,22 +93,29 @@ collection (there are way too many to store them)."
 Cached version is returned if it exists unless FORCE-RELOAD is t."
   
   ;; Build url from collection and name without checking for error
-  (let ((url (format (cdr (assoc collection svg-icon-collections)) name)))
+  (let ((url (format (cdr (assoc collection svg-icon-collections))
+                     (file-name-directory (or load-file-name buffer-file-name))
+                     name)))
 
     ;; Get data only if not cached or if explicitely requested
-    (if (or force-reload (not (url-is-cached url)))
-        (let ((url-automatic-caching t)
-              (filename (url-cache-create-filename url)))
-          (with-current-buffer (url-retrieve-synchronously url)
-            (write-region (point-min) (point-max) filename))))
+    ;; (if (or force-reload (not (url-is-cached url)))
+    ;;     (let* ((url-automatic-caching t)
+    ;;           (filename (url-cache-create-filename url))
+    ;;           (directory (file-name-directory filename)))
+    ;;       (make-directory directory 'parents)
+    ;;       (with-current-buffer (url-retrieve-synchronously url)
+    ;;         (write-region (point-min) (point-max) filename))))
 
     ;; Get data from cache
-    (let ((buffer (generate-new-buffer " *temp*")))
-      (with-current-buffer buffer
-        (url-cache-extract (url-cache-create-filename url)))
-      (with-temp-buffer
-        (url-insert-buffer-contents buffer url)
-        (xml-parse-region (point-min) (point-max))))))
+    ;; (let ((buffer (generate-new-buffer " *temp*")))
+    ;;   ;; (with-current-buffer buffer
+    ;;   ;;   (url-cache-extract (url-cache-create-filename url)))
+    ;;   (with-temp-buffer
+    ;;     ;; (url-insert-buffer-contents buffer url)
+    ;;     (insert-file-contents url)
+    ;;     (xml-parse-region (point-min) (point-max))))
+    (xml-parse-file url)
+    ))
 
 
 (defun svg-icon (collection name &optional fg-color bg-color zoom)

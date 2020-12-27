@@ -1,0 +1,15 @@
+[submodule "bootstrap"]
+	path = collections/bootstrap
+	url = https://github.com/twbs/icons
+
+[submodule "octicons"]
+	path = collections/octicons
+	url = https://github.com/primer/octicons
+
+[submodule "boxicons"]
+	path = collections/boxicons
+	url = https://github.com/atisawd/boxicons
+
+[submodule "material"]
+	path = collections/material
+	url = https://github.com/google/material-design-icons
