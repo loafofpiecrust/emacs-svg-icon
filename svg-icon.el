@@ -86,6 +86,7 @@ collection (there are way too many to store them)."
                 :value-type (string :tag "URL"))
   :group 'svg-icon)
 
+(defvar svg-icon--path (or load-file-name buffer-file-name))
 
 (defun svg-icon-get-data (collection name &optional force-reload)
   "Retrieve icon NAME from COLLECTION.
@@ -94,7 +95,7 @@ Cached version is returned if it exists unless FORCE-RELOAD is t."
   
   ;; Build url from collection and name without checking for error
   (let ((url (format (cdr (assoc collection svg-icon-collections))
-                     (file-name-directory (or load-file-name buffer-file-name))
+                     (file-name-directory svg-icon--path)
                      name)))
 
     ;; Get data only if not cached or if explicitely requested
